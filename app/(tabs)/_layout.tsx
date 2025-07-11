@@ -1,26 +1,93 @@
 import { Tabs } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, createContext, useContext } from 'react';
 import { View, TouchableOpacity, StyleSheet, Platform, Text, Modal, Animated, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+const ThemeContext = createContext({
+  theme: 'light',
+  toggleTheme: () => {},
+});
+
+interface ThemeColors {
+  background: string;
+  text: string;
+  secondaryText: string;
+  card: string;
+  accent: string;
+  fab: string;
+  fabText: string;
+  tabBar: string;
+  tabActive: string;
+  tabInactive: string;
+  inputBg: string;
+  bubbleAI: string;
+  bubbleUser: string;
+  border: string;
+  shadow: string;
+}
+
+type ThemeType = 'light' | 'dark';
+const themes: Record<ThemeType, ThemeColors> = {
+  light: {
+    background: '#fff',
+    text: '#222',
+    secondaryText: '#555',
+    card: '#FAFAFA',
+    accent: '#4F6AF6',
+    fab: '#222',
+    fabText: '#fff',
+    tabBar: '#fff',
+    tabActive: '#222',
+    tabInactive: '#B0B0B0',
+    inputBg: '#F7F7F8',
+    bubbleAI: '#F7F6FF',
+    bubbleUser: '#ECEAFF',
+    border: '#F0F0F0',
+    shadow: '#222',
+  },
+  dark: {
+    background: '#181A20',
+    text: '#fff',
+    secondaryText: '#AAA',
+    card: '#23242A',
+    accent: '#7C6BFF',
+    fab: '#fff',
+    fabText: '#222',
+    tabBar: '#23242A',
+    tabActive: '#fff',
+    tabInactive: '#555',
+    inputBg: '#23242A',
+    bubbleAI: '#23242A',
+    bubbleUser: '#35364A',
+    border: '#23242A',
+    shadow: '#000',
+  },
+};
+
+export { ThemeContext };
+
 function FloatingNewChatButton({ onPress }: { onPress: () => void }) {
+  const { theme } = useContext(ThemeContext);
+  const themeObj = themes[theme as ThemeType];
   return (
     <View style={styles.fabContainer} pointerEvents="box-none">
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.85}
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: themeObj.fab, shadowColor: themeObj.shadow, borderColor: themeObj.background }]}
       >
-        <Ionicons name="add" size={24} color="#fff" />
+        <Ionicons name="add" size={24} color={themeObj.fabText} />
       </TouchableOpacity>
-      <Text style={styles.fabLabel}>New chat</Text>
+      <Text style={[styles.fabLabel, { color: themeObj.fab } ]}>New chat</Text>
     </View>
   );
 }
 
 function ChatModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const { theme } = useContext(ThemeContext);
+  const themeObj = themes[theme as ThemeType];
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
   React.useEffect(() => {
@@ -43,30 +110,30 @@ function ChatModal({ visible, onClose }: { visible: boolean; onClose: () => void
 
   return (
     <Modal visible={visible} animationType="none" transparent>
-      <Animated.View style={[styles.chatModal, { transform: [{ translateY }] }]}> 
+      <Animated.View style={[styles.chatModal, { backgroundColor: themeObj.background, shadowColor: themeObj.shadow, borderColor: themeObj.border, }]}> 
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-          <View style={styles.chatHeader}>
-            <Text style={styles.chatTitle}>Chat</Text>
+          <View style={[styles.chatHeader, { backgroundColor: themeObj.background, borderColor: themeObj.border }] }>
+            <Text style={[styles.chatTitle, { color: themeObj.text }]}>Chat</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-              <Ionicons name="close" size={28} color="#222" />
+              <Ionicons name="close" size={28} color={themeObj.text} />
             </TouchableOpacity>
           </View>
           <View style={styles.chatBody}>
-            <View style={styles.bubbleAI}>
-              <Text style={styles.bubbleTextAI}>Hi! I’m your Tezza. How can I help you and your partner today?</Text>
+            <View style={[styles.bubbleAI, { backgroundColor: themeObj.bubbleAI }] }>
+              <Text style={[styles.bubbleTextAI, { color: themeObj.accent } ]}>Hi! I’m your Tezza. How can I help you and your partner today?</Text>
             </View>
-            <View style={styles.bubbleUser}>
-              <Text style={styles.bubbleTextUser}>How can we improve our communication?</Text>
+            <View style={[styles.bubbleUser, { backgroundColor: themeObj.bubbleUser }] }>
+              <Text style={[styles.bubbleTextUser, { color: themeObj.text } ]}>How can we improve our communication?</Text>
             </View>
           </View>
-          <View style={styles.inputBar}>
+          <View style={[styles.inputBar, { backgroundColor: 'transparent' }] }>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: themeObj.inputBg, color: themeObj.text }]}
               placeholder="Type a message..."
-              placeholderTextColor="#AAA"
+              placeholderTextColor={themeObj.secondaryText}
             />
-            <TouchableOpacity style={styles.sendBtn}>
-              <Ionicons name="send" size={22} color="#fff" />
+            <TouchableOpacity style={[styles.sendBtn, { backgroundColor: themeObj.accent, shadowColor: themeObj.accent }] }>
+              <Ionicons name="send" size={22} color={themeObj.fabText} />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -77,67 +144,72 @@ function ChatModal({ visible, onClose }: { visible: boolean; onClose: () => void
 
 export default function TabLayout() {
   const [showChat, setShowChat] = useState(false);
+  const [theme, setTheme] = useState<ThemeType>('light');
+  const toggleTheme = () => setTheme(t => (t === 'light' ? 'dark' : 'light'));
+  const themeObj = themes[theme];
 
   const handleNewChat = () => setShowChat(true);
   const handleCloseChat = () => setShowChat(false);
 
   return (
-    <View style={{ flex: 1 }}>
-      {!showChat && (
-        <>
-          <Tabs
-            screenOptions={{
-              headerShown: false,
-              tabBarActiveTintColor: '#222',
-              tabBarInactiveTintColor: '#B0B0B0',
-              tabBarShowLabel: true,
-              tabBarLabelStyle: {
-                fontSize: 11,
-                fontWeight: '500',
-                textTransform: 'capitalize',
-                marginBottom: 4,
-              },
-              tabBarStyle: {
-                height: 90,
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                backgroundColor: '#fff',
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                bottom: 0,
-                shadowColor: '#222',
-                shadowOpacity: 0.06,
-                shadowRadius: 12,
-                elevation: 8,
-                borderTopWidth: 0,
-              },
-            }}
-          >
-            <Tabs.Screen
-              name="index"
-              options={{
-                title: 'Home',
-                tabBarIcon: ({ color, focused }) => (
-                  <Ionicons name={focused ? 'home' : 'home-outline'} size={18} color={color} />
-                ),
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <View style={{ flex: 1, backgroundColor: themeObj.background }}>
+        {!showChat && (
+          <>
+            <Tabs
+              screenOptions={{
+                headerShown: false,
+                tabBarActiveTintColor: themeObj.tabActive,
+                tabBarInactiveTintColor: themeObj.tabInactive,
+                tabBarShowLabel: true,
+                tabBarLabelStyle: {
+                  fontSize: 11,
+                  fontWeight: '500',
+                  textTransform: 'capitalize',
+                  marginBottom: 4,
+                },
+                tabBarStyle: {
+                  height: 90,
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  backgroundColor: themeObj.tabBar,
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  shadowColor: themeObj.shadow,
+                  shadowOpacity: 0.06,
+                  shadowRadius: 12,
+                  elevation: 8,
+                  borderTopWidth: 0,
+                },
               }}
-            />
-            <Tabs.Screen
-              name="profile"
-              options={{
-                title: 'Profile',
-                tabBarIcon: ({ color, focused }) => (
-                  <Feather name="user" size={18} color={color} />
-                ),
-              }}
-            />
-          </Tabs>
-          <FloatingNewChatButton onPress={handleNewChat} />
-        </>
-      )}
-      <ChatModal visible={showChat} onClose={handleCloseChat} />
-    </View>
+            >
+              <Tabs.Screen
+                name="index"
+                options={{
+                  title: 'Home',
+                  tabBarIcon: ({ color, focused }) => (
+                    <Ionicons name={focused ? 'home' : 'home-outline'} size={18} color={color} />
+                  ),
+                }}
+              />
+              <Tabs.Screen
+                name="profile"
+                options={{
+                  title: 'Profile',
+                  tabBarIcon: ({ color, focused }) => (
+                    <Feather name="user" size={18} color={color} />
+                  ),
+                }}
+              />
+            </Tabs>
+            <FloatingNewChatButton onPress={handleNewChat} />
+          </>
+        )}
+        <ChatModal visible={showChat} onClose={handleCloseChat} />
+      </View>
+    </ThemeContext.Provider>
   );
 }
 

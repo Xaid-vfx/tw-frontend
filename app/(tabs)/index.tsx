@@ -1,6 +1,95 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
 import { Feather, Ionicons } from '@expo/vector-icons';
+import { ThemeContext } from './_layout';
+
+export default function HomeScreen() {
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const themeObj = theme === 'dark' ? {
+    background: '#181A20', text: '#fff', secondaryText: '#AAA', card: '#23242A', accent: '#7C6BFF', fab: '#fff', fabText: '#222', tabBar: '#23242A', tabActive: '#fff', tabInactive: '#555', inputBg: '#23242A', bubbleAI: '#23242A', bubbleUser: '#35364A', border: '#23242A', shadow: '#000',
+  } : {
+    background: '#fff', text: '#222', secondaryText: '#555', card: '#FAFAFA', accent: '#4F6AF6', fab: '#222', fabText: '#fff', tabBar: '#fff', tabActive: '#222', tabInactive: '#B0B0B0', inputBg: '#F7F7F8', bubbleAI: '#F7F6FF', bubbleUser: '#ECEAFF', border: '#F0F0F0', shadow: '#222',
+  };
+
+  const updates = [
+    {
+      id: 1,
+      color: theme === 'dark' ? '#23242A' : '#D6E6FB',
+      icon: (
+        <View style={[styles.aiBadge, { backgroundColor: theme === 'dark' ? '#23242A' : '#EDF6FF' }] }><Text style={[styles.aiBadgeText, { color: themeObj.accent }]}>AI</Text></View>
+      ),
+      title: 'Engine update',
+      subtitle: 'New AI therapist features',
+    },
+    {
+      id: 2,
+      color: theme === 'dark' ? '#35364A' : '#E6D6FB',
+      icon: (
+        <View style={[styles.leafIcon, { backgroundColor: theme === 'dark' ? '#35364A' : '#F3EDFF' }] }><Feather name="activity" size={18} color={themeObj.accent} /></View>
+      ),
+      title: 'New principles',
+      subtitle: 'Relationship therapy techniques',
+    },
+  ];
+
+  const chatHistory = [
+    {
+      id: 1,
+      icon: 'zap' as const,
+      question: 'How can I improve communication with my partner?',
+      subtitle: 'in a way that builds trust and understanding',
+    },
+    {
+      id: 2,
+      icon: 'zap' as const,
+      question: 'Generate a personalized exercise plan',
+      subtitle: 'for couples to practice active listening techniques',
+    },
+  ];
+
+  return (
+    <View style={[styles.container, { backgroundColor: themeObj.background }] }>
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <Text style={[styles.appTitle, { color: themeObj.text }]}>ThirdWheel</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity style={styles.searchBtn}>
+            <Feather name="search" size={22} color={themeObj.text} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleTheme} style={styles.themeBtn}>
+            <Feather name={theme === 'dark' ? 'sun' : 'moon'} size={22} color={themeObj.text} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 32}}>
+        {/* Updates Section */}
+        <Text style={[styles.sectionTitle, { color: themeObj.text }]}>Updates</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.updatesRow}>
+          {updates.map((item) => (
+            <View key={item.id} style={[styles.updateCard, {backgroundColor: item.color}]}> 
+              {item.icon}
+              <Text style={[styles.updateTitle, { color: themeObj.text }]}>{item.title}</Text>
+              <Text style={[styles.updateSubtitle, { color: themeObj.secondaryText }]}>{item.subtitle}</Text>
+            </View>
+          ))}
+        </ScrollView>
+        {/* Chat History Section */}
+        <Text style={[styles.sectionTitle, { color: themeObj.text }]}>Chat history</Text>
+        <View style={styles.chatHistoryList}>
+          {chatHistory.map((item) => (
+            <View key={item.id} style={[styles.chatCard, { backgroundColor: themeObj.card, borderColor: themeObj.border }] }>
+              <Feather name={item.icon} size={18} color={themeObj.accent} style={{marginRight: 10}} />
+              <View style={{flex: 1}}>
+                <Text style={[styles.chatQuestion, { color: themeObj.text }]}>{item.question}</Text>
+                <Text style={[styles.chatSubtitle, { color: themeObj.secondaryText }]}>{item.subtitle}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -23,6 +112,10 @@ const styles = StyleSheet.create({
     fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
   },
   searchBtn: {
+    padding: 8,
+    borderRadius: 20,
+  },
+  themeBtn: {
     padding: 8,
     borderRadius: 20,
   },
@@ -119,86 +212,4 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
 });
-const updates = [
-  {
-    id: 1,
-    color: '#D6E6FB',
-    icon: (
-      <View style={styles.aiBadge}><Text style={styles.aiBadgeText}>AI</Text></View>
-    ),
-    title: 'Engine update',
-    subtitle: 'New AI therapist features',
-  },
-  {
-    id: 2,
-    color: '#E6D6FB',
-    icon: (
-      <View style={styles.leafIcon}><Feather name="activity" size={18} color="#6C5DD3" /></View>
-    ),
-    title: 'New principles',
-    subtitle: 'Relationship therapy techniques',
-  },
-];
-
-const chatHistory = [
-  {
-    id: 1,
-    icon: 'zap' as const,
-    question: 'How can I improve communication with my partner?',
-    subtitle: 'in a way that builds trust and understanding',
-  },
-  {
-    id: 2,
-    icon: 'zap' as const,
-    question: 'Generate a personalized exercise plan',
-    subtitle: 'for couples to practice active listening techniques',
-  },
-  {
-    id: 3,
-    icon: 'zap' as const,
-    question: 'How can I improve communication with my partner?',
-    subtitle: 'in a way that builds trust and understanding',
-  },
-  
-];
-
-export default function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <Text style={styles.appTitle}>ThirdWheel</Text>
-        <TouchableOpacity style={styles.searchBtn}>
-          <Feather name="search" size={22} color="#222" />
-        </TouchableOpacity>
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 32}}>
-        {/* Updates Section */}
-        <Text style={styles.sectionTitle}>Updates</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.updatesRow}>
-          {updates.map((item) => (
-            <View key={item.id} style={[styles.updateCard, {backgroundColor: item.color}]}> 
-              {item.icon}
-              <Text style={styles.updateTitle}>{item.title}</Text>
-              <Text style={styles.updateSubtitle}>{item.subtitle}</Text>
-            </View>
-          ))}
-        </ScrollView>
-        {/* Chat History Section */}
-        <Text style={styles.sectionTitle}>Chat history</Text>
-        <View style={styles.chatHistoryList}>
-          {chatHistory.map((item) => (
-            <View key={item.id} style={styles.chatCard}>
-              <Feather name={item.icon} size={18} color="#FFD600" style={{marginRight: 10}} />
-              <View style={{flex: 1}}>
-                <Text style={styles.chatQuestion}>{item.question}</Text>
-                <Text style={styles.chatSubtitle}>{item.subtitle}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
-  );
-}
 
