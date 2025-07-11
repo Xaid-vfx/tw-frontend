@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     color: '#F8F8FF',
     marginBottom: 16,
     textAlign: 'center',
-    fontFamily: 'Quicksand-Bold',
     letterSpacing: 0.1,
   },
   subtitle: {
@@ -76,7 +75,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.95,
     lineHeight: 22,
-    fontFamily: 'Quicksand',
   },
   button: {
     backgroundColor: '#fff',
@@ -91,6 +89,5 @@ const styles = StyleSheet.create({
     color: '#6C63FF',
     fontSize: 16,
     letterSpacing: 0.1,
-    fontFamily: 'Quicksand-SemiBold',
   },
 }); 

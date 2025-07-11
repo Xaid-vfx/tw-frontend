@@ -28,7 +28,8 @@ export default function NameScreen() {
         <Text style={styles.backText}>‹</Text>
       </TouchableOpacity>
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        <Text style={styles.title}>What&apos;s your first name?</Text>
+        <Text style={styles.title}>What name do you like to go by?</Text>
+        <Text style={styles.note}>Use your real name or a nickname/alias if you prefer.</Text>
         <TextInput
           style={styles.input}
           placeholder="First name"
@@ -92,9 +93,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     color: '#23243A',
-    marginBottom: 32,
+    marginBottom: 12,
     textAlign: 'center',
     letterSpacing: 0.1,
+  },
+  note: {
+    fontSize: 13,
+    color: '#6C63FF',
+    marginBottom: 20,
+    textAlign: 'center',
+    opacity: 0.85,
   },
   input: {
     width: '100%',
