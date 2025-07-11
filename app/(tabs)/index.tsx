@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 20,
-    marginTop: 4,
+    marginTop: 8,
   },
   appTitle: {
     fontSize: 25,
