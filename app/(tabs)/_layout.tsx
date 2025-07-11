@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React, { useRef, useState, createContext, useContext } from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform, Text, Modal, Animated, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform, Text, Modal, Animated, Dimensions, TextInput, KeyboardAvoidingView, Easing } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -89,32 +89,41 @@ function ChatModal({ visible, onClose }: { visible: boolean; onClose: () => void
   const { theme } = useContext(ThemeContext);
   const themeObj = themes[theme as ThemeType];
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const [isAnimating, setIsAnimating] = useState(false);
 
   React.useEffect(() => {
     if (visible) {
+      setIsAnimating(true);
       Animated.timing(translateY, {
         toValue: 0,
-        duration: 420,
+        duration: 400,
         useNativeDriver: true,
-        easing: (t) => 1 - Math.pow(1 - t, 3), // easeOutCubic
-      }).start();
+        easing: Easing.out(Easing.cubic),
+      }).start(() => setIsAnimating(false));
     } else {
+      setIsAnimating(true);
       Animated.timing(translateY, {
         toValue: SCREEN_HEIGHT,
-        duration: 320,
+        duration: 400,
         useNativeDriver: true,
-        easing: (t) => t * t,
-      }).start();
+        easing: Easing.in(Easing.cubic),
+      }).start(() => {
+        setIsAnimating(false);
+        onClose();
+      });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
+  if (!visible && !isAnimating) return null;
+
   return (
-    <Modal visible={visible} animationType="none" transparent>
-      <Animated.View style={[styles.chatModal, { backgroundColor: themeObj.background, shadowColor: themeObj.shadow, borderColor: themeObj.border, }]}> 
+    <Modal visible={true} animationType="none" transparent>
+      <Animated.View style={[styles.chatModal, { backgroundColor: themeObj.background, shadowColor: themeObj.shadow, borderColor: themeObj.border, transform: [{ translateY }] }]}> 
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={[styles.chatHeader, { backgroundColor: themeObj.background, borderColor: themeObj.border }] }>
             <Text style={[styles.chatTitle, { color: themeObj.text }]}>Chat</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+            <TouchableOpacity onPress={() => { if (!isAnimating) onClose(); }} style={styles.closeBtn} disabled={isAnimating}>
               <Ionicons name="close" size={28} color={themeObj.text} />
             </TouchableOpacity>
           </View>
