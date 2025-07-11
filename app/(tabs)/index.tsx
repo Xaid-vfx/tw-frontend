@@ -1,75 +1,204 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingTop: Platform.OS === 'android' ? 48 : 56,
+    paddingHorizontal: 20,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    marginTop: 4,
+  },
+  appTitle: {
+    fontSize: 25,
+    fontWeight: '700',
+    color: '#222',
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+  },
+  searchBtn: {
+    padding: 8,
+    borderRadius: 20,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#222',
+    marginBottom: 18,
+    marginTop: 14,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+  },
+  updatesRow: {
+    flexGrow: 0,
+    marginBottom: 22,
+  },
+  updateCard: {
+    width: 160,
+    height: 150,
+    borderRadius: 20,
+    marginRight: 14,
+    padding: 16,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+  },
+  aiBadge: {
+    backgroundColor: '#EDF6FF',
+    alignSelf: 'flex-start',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginBottom: 8,
+  },
+  aiBadgeText: {
+    color: '#6C5DD3',
+    fontWeight: '700',
+    fontSize: 13,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+  },
+  leafIcon: {
+    backgroundColor: '#F3EDFF',
+    alignSelf: 'flex-start',
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginBottom: 8,
+  },
+  updateTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#222',
+    marginBottom: 2,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+  },
+  updateSubtitle: {
+    fontSize: 13,
+    color: '#555',
+    fontWeight: '400',
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+  },
+  chatHistoryList: {
+    marginTop: 2,
+  },
+  chatCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#FAFAFA',
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+  },
+  chatQuestion: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#222',
+    marginBottom: 8,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+  },
+  chatSubtitle: {
+    fontSize: 13,
+    color: '#888',
+    fontWeight: '400',
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+  },
+  fabLabel: {
+    marginTop: 6,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#000',
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif', default: undefined }),
+    textAlign: 'center',
+    letterSpacing: 0.1,
+  },
+});
+const updates = [
+  {
+    id: 1,
+    color: '#D6E6FB',
+    icon: (
+      <View style={styles.aiBadge}><Text style={styles.aiBadgeText}>AI</Text></View>
+    ),
+    title: 'Engine update',
+    subtitle: 'New AI therapist features',
+  },
+  {
+    id: 2,
+    color: '#E6D6FB',
+    icon: (
+      <View style={styles.leafIcon}><Feather name="activity" size={18} color="#6C5DD3" /></View>
+    ),
+    title: 'New principles',
+    subtitle: 'Relationship therapy techniques',
+  },
+];
+
+const chatHistory = [
+  {
+    id: 1,
+    icon: 'zap' as const,
+    question: 'How can I improve communication with my partner?',
+    subtitle: 'in a way that builds trust and understanding',
+  },
+  {
+    id: 2,
+    icon: 'zap' as const,
+    question: 'Generate a personalized exercise plan',
+    subtitle: 'for couples to practice active listening techniques',
+  },
+  {
+    id: 3,
+    icon: 'zap' as const,
+    question: 'How can I improve communication with my partner?',
+    subtitle: 'in a way that builds trust and understanding',
+  },
+  
+];
 
 export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <Text style={styles.appTitle}>ThirdWheel</Text>
+        <TouchableOpacity style={styles.searchBtn}>
+          <Feather name="search" size={22} color="#222" />
+        </TouchableOpacity>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 32}}>
+        {/* Updates Section */}
+        <Text style={styles.sectionTitle}>Updates</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.updatesRow}>
+          {updates.map((item) => (
+            <View key={item.id} style={[styles.updateCard, {backgroundColor: item.color}]}> 
+              {item.icon}
+              <Text style={styles.updateTitle}>{item.title}</Text>
+              <Text style={styles.updateSubtitle}>{item.subtitle}</Text>
+            </View>
+          ))}
+        </ScrollView>
+        {/* Chat History Section */}
+        <Text style={styles.sectionTitle}>Chat history</Text>
+        <View style={styles.chatHistoryList}>
+          {chatHistory.map((item) => (
+            <View key={item.id} style={styles.chatCard}>
+              <Feather name={item.icon} size={18} color="#FFD600" style={{marginRight: 10}} />
+              <View style={{flex: 1}}>
+                <Text style={styles.chatQuestion}>{item.question}</Text>
+                <Text style={styles.chatSubtitle}>{item.subtitle}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
